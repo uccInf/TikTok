@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"TikTok/dao"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 
 type VideoListResponse struct {
 	Response
-	VideoList []Video `json:"video_list"`
+	VideoList []dao.Video `json:"video_list"`
 }
 
 // Publish check token then save upload file to public directory

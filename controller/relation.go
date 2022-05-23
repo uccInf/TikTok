@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"TikTok/dao"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type UserListResponse struct {
 	Response
-	UserList []User `json:"user_list"`
+	UserList []dao.User `json:"user_list"`
 }
 
 // RelationAction no practical effect, just check if token is valid
@@ -27,7 +28,7 @@ func FollowList(c *gin.Context) {
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: []User{DemoUser},
+		UserList: []dao.User{DemoUser},
 	})
 }
 
@@ -37,6 +38,6 @@ func FollowerList(c *gin.Context) {
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: []User{DemoUser},
+		UserList: []dao.User{DemoUser},
 	})
 }
