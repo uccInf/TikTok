@@ -2,7 +2,7 @@ package constdef
 
 var ServerPort = 8080
 
-var StaticServerPath = "./static"
+var StaticServerPath = "/static"
 
 var StaticLocalPath = "./public"
 
@@ -10,7 +10,7 @@ var StaticLocalPath = "./public"
 var (
 	UserName          = "root"
 	PassWord          = "12345678"
-	Ip                = "127.0.0.1"
+	Ip                = "192.168.1.25"
 	Port              = 3306
 	DataBaseName      = "TikTok"
 	UserTableName     = "users"

@@ -38,11 +38,11 @@ func Publish(c *gin.Context) {
 		})
 		return
 	}
-	playUrl := filepath.Join(
+	playUrl := "http://" + filepath.Join(
 		fmt.Sprintf("%s:%d%s", constdef.Ip, constdef.ServerPort, constdef.StaticServerPath),
 		finalName,
 	)
-	service.CreateVideo(user, playUrl, "")
+	service.CreateVideo(user, playUrl, playUrl)
 
 	c.JSON(http.StatusOK, Response{
 		StatusCode: 0,
@@ -66,5 +66,4 @@ func PublishList(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
 		})
 	}
-
 }

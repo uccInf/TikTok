@@ -22,9 +22,9 @@ func InitTable(d interface{}) {
 
 func Init() {
 	var err error
-	s := "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
+	s := "%s:%s@tcp(localhost:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf(
-		s, constdef.UserName, constdef.PassWord, constdef.Ip, constdef.Port, constdef.DataBaseName,
+		s, constdef.UserName, constdef.PassWord, constdef.Port, constdef.DataBaseName,
 	)
 	fmt.Println(dsn)
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})

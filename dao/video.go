@@ -4,7 +4,7 @@ import "TikTok/constdef"
 
 type Video struct {
 	Id            int64  `json:"id,omitempty" gorm:"primaryKey;unique"`
-	Author        User   `json:"author" gorm:"foreignKey:Id;association_foreignKey:AuthorId"`
+	Author        User   `json:"author"`
 	AuthorId      int64  `json:"author_id"`
 	PlayUrl       string `json:"play_url" json:"play_url,omitempty"`
 	CoverUrl      string `json:"cover_url,omitempty"`
