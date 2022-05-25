@@ -26,7 +26,6 @@ func GetComments(videoId int64) []Comment {
 	DB.Table(constdef.CommentsTableName).
 		Where("video_id = ?", videoId).
 		Find(&comments)
-
 	return comments
 }
 

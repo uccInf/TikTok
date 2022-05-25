@@ -1,8 +1,10 @@
 package controller
 
-import "TikTok/dao"
+import (
+	"TikTok/dao"
+)
 
-var usersLoginInfo = make(map[string]*dao.User)
+// var usersLoginInfo = make(map[string]*dao.User)
 
 type Response struct {
 	StatusCode int32  `json:"status_code"`

@@ -17,3 +17,7 @@ var (
 	CommentsTableName = "comments"
 	VideosTableName   = "videos"
 )
+
+var ReplaceWord = "******"
+
+var SECRETKEY = "asdfdjsalf"

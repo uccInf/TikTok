@@ -3,6 +3,7 @@ package controller
 import (
 	"TikTok/dao"
 	"TikTok/service"
+	"TikTok/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -17,18 +18,21 @@ type FeedResponse struct {
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
 	token := c.Query("token")
-	if user, exist := usersLoginInfo[token]; exist {
-		RecommendVideos := service.GetPublishedVideosByUserId(user.Id)
-		c.JSON(http.StatusOK, FeedResponse{
-			Response:  Response{StatusCode: 0},
-			VideoList: RecommendVideos,
-			NextTime:  time.Now().Unix(),
-		})
-	} else {
-		c.JSON(http.StatusOK, FeedResponse{
-			Response:  Response{StatusCode: 0},
-			VideoList: DemoVideos,
-			NextTime:  time.Now().Unix(),
-		})
+	if token != "" {
+		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
+			RecommendVideos := service.GetPublishedVideosByUserId(claim.UserId)
+			c.JSON(http.StatusOK, FeedResponse{
+				Response:  Response{StatusCode: 0},
+				VideoList: RecommendVideos,
+				NextTime:  time.Now().Unix(),
+			})
+			return
+		}
 	}
+	c.JSON(http.StatusOK, FeedResponse{
+		Response:  Response{StatusCode: 0},
+		VideoList: DemoVideos,
+		NextTime:  time.Now().Unix(),
+	})
+
 }

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"TikTok/service"
-	"fmt"
+	"TikTok/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -13,14 +13,17 @@ func CommentAction(c *gin.Context) {
 	token := c.Query("token")
 	content := c.Query("comment_text")
 	videoId, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
-	fmt.Println(videoId, token, content)
-	if user, exist := usersLoginInfo[token]; exist {
-		fmt.Println(videoId, token, content, user)
-		service.CreateComment(user.Id, content, videoId)
-		c.JSON(http.StatusOK, Response{StatusCode: 0})
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	if token != "" {
+		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
+			service.CreateComment(claim.UserId, content, videoId)
+			service.AddVideoCommentNum(videoId)
+			c.JSON(http.StatusOK, Response{StatusCode: 0})
+			return
+		}
+
 	}
+	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+
 }
 
 // CommentList all videos have same demo comment list

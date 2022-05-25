@@ -3,6 +3,7 @@ package controller
 import (
 	"TikTok/constdef"
 	"TikTok/service"
+	"TikTok/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 func Publish(c *gin.Context) {
 	token := c.PostForm("token")
 
-	if _, exist := usersLoginInfo[token]; !exist {
+	if claim, err := utils.ParseToken(token); claim == nil || err != nil {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 		return
 	}
@@ -28,7 +29,8 @@ func Publish(c *gin.Context) {
 	}
 
 	filename := filepath.Base(data.Filename)
-	user := usersLoginInfo[token]
+	claim, _ := utils.ParseToken(token)
+	user, _ := service.GetUserByName(claim.UserName)
 	finalName := fmt.Sprintf("%d_%s", user.Id, filename)
 	saveFile := filepath.Join(constdef.StaticLocalPath, finalName)
 	if err := c.SaveUploadedFile(data, saveFile); err != nil {
@@ -53,17 +55,20 @@ func Publish(c *gin.Context) {
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
 	token := c.Query("token")
-	if user, exist := usersLoginInfo[token]; exist {
-		videos := service.GetPublishedVideosByUserId(user.Id)
-		c.JSON(http.StatusOK, VideoListResponse{
-			Response: Response{
-				StatusCode: 0,
-			},
-			VideoList: videos,
-		})
-	} else {
-		c.JSON(http.StatusOK, UserInfoResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-		})
+	if token != "" {
+		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
+			videos := service.GetPublishedVideosByUserId(claim.UserId)
+			c.JSON(http.StatusOK, VideoListResponse{
+				Response: Response{
+					StatusCode: 0,
+				},
+				VideoList: videos,
+			})
+			return
+		}
 	}
+	c.JSON(http.StatusOK, UserInfoResponse{
+		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+	})
+
 }

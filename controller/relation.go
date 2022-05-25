@@ -2,6 +2,7 @@ package controller
 
 import (
 	"TikTok/dao"
+	"TikTok/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -15,11 +16,15 @@ type UserListResponse struct {
 func RelationAction(c *gin.Context) {
 	token := c.Query("token")
 
-	if _, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, Response{StatusCode: 0})
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	if token != "" {
+		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
+			c.JSON(http.StatusOK, Response{StatusCode: 0})
+			return
+		}
 	}
+
+	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+
 }
 
 // FollowList all users have same follow list

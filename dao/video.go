@@ -16,7 +16,7 @@ type Video struct {
 func GetVideoById(videoId int64) *Video {
 	var video Video
 	DB.Table(constdef.VideosTableName).
-		Where("video_id = ?", videoId).
+		Where("Id = ?", videoId).
 		Find(&video)
 	return &video
 }
@@ -32,4 +32,8 @@ func GetPublishedVideosByUserId(userId int64) []Video {
 		Where("author_id = ?", userId).
 		Find(&videos)
 	return videos
+}
+
+func AddVideoCommentNum(videoId int64, num int64) {
+	DB.Model(Video{}).Where("id = ?", videoId).Update("comment_count", num+1)
 }
