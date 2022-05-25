@@ -1,5 +1,7 @@
 package dao
 
+import "TikTok/constdef"
+
 type User struct {
 	Id            int64  `json:"id,omitempty" gorm:"primaryKey;unique"`
 	Name          string `json:"name,omitempty" gorm:"unique"`
@@ -9,15 +11,17 @@ type User struct {
 	PassWord      string `json:"pass_word,omitempty"`
 }
 
-func SelectUserByName(name string) (u User, e error) {
+func GetUserByName(name string) (u *User, e error) {
 	user := User{}
-	result := DB.Where("name = ?", name).First(&user)
+	result := DB.Table(constdef.UserTableName).
+		Where("name = ?", name).
+		First(&user)
 	// errors.Is(result.Error, gorm.ErrRecordNotFound)
-	return user, result.Error
+	return &user, result.Error
 }
 
-func CreateUser(name string, password string) (u User) {
-	user := User{PassWord: password, Name: name}
-	DB.Create(&user)
+func CreateUser(name string, password string) (u *User) {
+	user := &User{PassWord: password, Name: name}
+	DB.Create(user)
 	return user
 }

@@ -16,8 +16,8 @@ var DemoVideos = []dao.Video{
 
 var DemoComments = []dao.Comment{
 	{
-		Id:         1,
-		User:       DemoUser,
+		Id: 1,
+
 		Content:    "Test Comment",
 		CreateDate: "05-01",
 	},
