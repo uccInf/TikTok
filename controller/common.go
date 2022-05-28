@@ -31,3 +31,8 @@ type VideoListResponse struct {
 	Response
 	VideoList []dao.Video `json:"video_list"`
 }
+
+type CommentActionResponse struct {
+	Response
+	Comment dao.Comment `json:"comment,omitempty"`
+}

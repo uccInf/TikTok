@@ -11,16 +11,25 @@ import (
 // CommentAction no practical effect, just check if token is valid
 func CommentAction(c *gin.Context) {
 	token := c.Query("token")
-	content := c.Query("comment_text")
+	actionType := c.Query("action_type")
 	videoId, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
 	if token != "" {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
-			service.CreateComment(claim.UserId, content, videoId)
-			service.AddVideoCommentNum(videoId)
-			c.JSON(http.StatusOK, Response{StatusCode: 0})
+			if actionType == "1" {
+				content := c.Query("comment_text")
+				comment := service.CreateComment(claim.UserId, content, videoId)
+				service.AddVideoCommentNum(videoId)
+				c.JSON(http.StatusOK,
+					CommentActionResponse{
+						Response: Response{StatusCode: 0},
+						Comment:  *comment,
+					})
+
+			} else {
+				c.JSON(http.StatusOK, Response{StatusCode: 0})
+			}
 			return
 		}
-
 	}
 	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 

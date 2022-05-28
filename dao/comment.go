@@ -29,10 +29,11 @@ func GetComments(videoId int64) []Comment {
 	return comments
 }
 
-func CreateComment(userId int64, content string, videoId int64) {
+func CreateComment(userId int64, content string, videoId int64) *Comment {
 	comment := &Comment{UserId: userId, Content: content, VideoId: videoId, CreateDate: time.Now().Format("2006-01-02 15:04:05")}
 	DB.Table(constdef.CommentsTableName).
 		Create(&comment)
+	return comment
 }
 
 func DeleteCommentById(Id int64) {
