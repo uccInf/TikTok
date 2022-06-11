@@ -17,7 +17,7 @@ func ParseToken(tokenString string) (*CustomClaims, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(constdef.SECRETKEY), nil
+		return []byte(constdef.SecretKey), nil
 	})
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 		return claims, nil

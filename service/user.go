@@ -39,10 +39,18 @@ func CreateToken(userId int64, userName string) string {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
-	tokenString, _ := token.SignedString([]byte(constdef.SECRETKEY))
+	tokenString, _ := token.SignedString([]byte(constdef.SecretKey))
 	return tokenString
 }
 
 func GetUserByName(name string) (*dao.User, error) {
 	return dao.GetUserByName(name)
+}
+
+func AddFavorite(user *dao.User, video *dao.Video) {
+	dao.AddUserFavoriteVideos(user, video)
+}
+
+func RemoveFavorite(user *dao.User, video *dao.Video) {
+	dao.RemoveUserFavoriteVideos(user, video)
 }

@@ -9,17 +9,6 @@ import (
 
 var DB *gorm.DB
 
-func InitTable(d interface{}) {
-	m := DB.Migrator()
-	if m.HasTable(&d) {
-		return
-	}
-
-	if err := m.CreateTable(&d); err != nil {
-		panic(err)
-	}
-}
-
 func Init() {
 	var err error
 	s := "%s:%s@tcp(localhost:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
@@ -27,15 +16,20 @@ func Init() {
 		s, constdef.UserName, constdef.PassWord, constdef.Port, constdef.DataBaseName,
 	)
 	fmt.Println(dsn)
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 	//DB.DB().SetMaxOpenConns(100)
 	//DB.DB().SetMaxIdleConns(10)
 	if err != nil {
 		panic(err)
 	}
-	InitTable(&User{})
-	InitTable(&Video{})
-	InitTable(&Comment{})
+	DB.AutoMigrate(&User{}, &Video{}, &Comment{})
+
+	if err != nil {
+		panic(err)
+	}
+
 }
 
 func GetDB() *gorm.DB {

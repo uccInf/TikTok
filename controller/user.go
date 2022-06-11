@@ -16,10 +16,10 @@ func Register(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
 		})
 	} else {
-		token := service.CreateToken(user.Id, username)
+		token := service.CreateToken(user.UserId, username)
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
-			UserId:   user.Id,
+			UserId:   user.UserId,
 			Token:    token,
 		})
 	}
@@ -30,10 +30,10 @@ func Login(c *gin.Context) {
 	password := c.Query("password")
 
 	if user, err := service.Login(username, password); err == nil {
-		token := service.CreateToken(user.Id, username)
+		token := service.CreateToken(user.UserId, username)
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
-			UserId:   user.Id,
+			UserId:   user.UserId,
 			Token:    token,
 		})
 	} else {

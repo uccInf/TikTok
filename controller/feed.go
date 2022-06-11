@@ -17,22 +17,21 @@ type FeedResponse struct {
 
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
+	latestVideos := service.GetLatestVideos(0)
 	token := c.Query("token")
 	if token != "" {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
-			RecommendVideos := service.GetPublishedVideosByUserId(claim.UserId)
-			c.JSON(http.StatusOK, FeedResponse{
-				Response:  Response{StatusCode: 0},
-				VideoList: RecommendVideos,
-				NextTime:  time.Now().Unix(),
-			})
-			return
+			user, _ := service.GetUserByName(claim.UserName)
+			for i := 0; i < len(latestVideos); i++ {
+				if service.CheckIsFavorite(latestVideos[i].VideoId, user) {
+					latestVideos[i].IsFavorite = true
+				}
+			}
 		}
 	}
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
-		VideoList: DemoVideos,
+		VideoList: latestVideos,
 		NextTime:  time.Now().Unix(),
 	})
-
 }

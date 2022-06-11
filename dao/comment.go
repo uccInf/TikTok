@@ -6,7 +6,7 @@ import (
 )
 
 type Comment struct {
-	Id         int64  `json:"id,omitempty" gorm:"primaryKey;unique"`
+	CommentId  int64  `json:"id,omitempty" gorm:"primaryKey;unique"`
 	UserId     int64  `json:"user_id"`
 	Content    string `json:"content,omitempty"`
 	CreateDate string `json:"create_date,omitempty"`
@@ -30,7 +30,12 @@ func GetComments(videoId int64) []Comment {
 }
 
 func CreateComment(userId int64, content string, videoId int64) *Comment {
-	comment := &Comment{UserId: userId, Content: content, VideoId: videoId, CreateDate: time.Now().Format("2006-01-02 15:04:05")}
+	comment := &Comment{
+		UserId:     userId,
+		Content:    content,
+		VideoId:    videoId,
+		CreateDate: time.Now().Format("2006-01-02 15:04:05"),
+	}
 	DB.Table(constdef.CommentsTableName).
 		Create(&comment)
 	return comment

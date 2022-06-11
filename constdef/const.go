@@ -1,13 +1,13 @@
 package constdef
 
-var ServerPort = 8080
+const ServerPort = 8080
 
-var StaticServerPath = "/static"
+const StaticServerPath = "/static"
 
-var StaticLocalPath = "./public"
+const StaticLocalPath = "./public"
 
 // database config
-var (
+const (
 	UserName          = "root"
 	PassWord          = "12345678"
 	Ip                = "192.168.1.25"
@@ -18,6 +18,6 @@ var (
 	VideosTableName   = "videos"
 )
 
-var ReplaceWord = "******"
+const ReplaceWord = "******"
 
-var SECRETKEY = "asdfdjsalf"
+const SecretKey = "TikTok"
