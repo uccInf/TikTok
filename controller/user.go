@@ -45,7 +45,7 @@ func Login(c *gin.Context) {
 
 func UserInfo(c *gin.Context) {
 	token := c.Query("token")
-	if token != "" {
+	if service.CheckToken(token) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			user, _ := service.GetUserByName(claim.UserName)
 			c.JSON(http.StatusOK, UserInfoResponse{
@@ -57,7 +57,10 @@ func UserInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, UserInfoResponse{
-		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+		Response: Response{
+			StatusCode: 1,
+			StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
+		},
 	})
 
 }

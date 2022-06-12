@@ -3,6 +3,8 @@ package service
 import (
 	"TikTok/constdef"
 	"TikTok/dao"
+	"TikTok/logger"
+	"TikTok/rdb"
 	"TikTok/utils"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
@@ -40,6 +42,11 @@ func CreateToken(userId int64, userName string) string {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
 	tokenString, _ := token.SignedString([]byte(constdef.SecretKey))
+	r := rdb.GetRedisClient()
+	_, err := r.Set(tokenString, userName, time.Hour).Result()
+	if err != nil {
+		logger.Error("fail to set token in redis  " + err.Error())
+	}
 	return tokenString
 }
 
@@ -53,4 +60,8 @@ func AddFavorite(user *dao.User, video *dao.Video) {
 
 func RemoveFavorite(user *dao.User, video *dao.Video) {
 	dao.RemoveUserFavoriteVideos(user, video)
+}
+
+func CheckToken(token string) bool {
+	return rdb.CheckToken(token)
 }

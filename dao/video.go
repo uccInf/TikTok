@@ -28,7 +28,7 @@ func GetVideoById(videoId int64) *Video {
 	return &video
 }
 
-func CreateVideo(author *User, playUrl string, coverUrl string, title string) {
+func CreateVideo(author *User, playUrl string, coverUrl string, title string) *Video {
 	video := &Video{
 		Author:     *author,
 		AuthorId:   author.UserId,
@@ -40,6 +40,7 @@ func CreateVideo(author *User, playUrl string, coverUrl string, title string) {
 	DB.Table(constdef.VideosTableName).
 		Preload("Author").
 		Create(video)
+	return video
 }
 
 func GetPublishedVideosByUserId(userId int64) []Video {
@@ -63,13 +64,12 @@ func RemoveVideoFavoriteNum(videoId int64, num int64) {
 	DB.Model(Video{}).Where("video_id = ?", videoId).Update("favorite_count", num-1)
 }
 
-func GetLatestVideos(skip int) []Video {
+func GetLatestVideos() []Video {
 	var videos []Video
 	DB.Table(constdef.VideosTableName).
 		Preload("Author").
 		Order("create_time desc").
 		Limit(30).
-		Offset(skip).
 		Find(&videos)
 	return videos
 }

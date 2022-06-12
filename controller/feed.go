@@ -17,9 +17,9 @@ type FeedResponse struct {
 
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
-	latestVideos := service.GetLatestVideos(0)
+	latestVideos := service.GetLatestVideos()
 	token := c.Query("token")
-	if token != "" {
+	if service.CheckToken(token) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			user, _ := service.GetUserByName(claim.UserName)
 			for i := 0; i < len(latestVideos); i++ {

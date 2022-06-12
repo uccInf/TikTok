@@ -2,6 +2,7 @@ package service
 
 import (
 	"TikTok/dao"
+	"TikTok/rdb"
 )
 
 func GetVideoByVideoId(videoId int64) *dao.Video {
@@ -9,7 +10,8 @@ func GetVideoByVideoId(videoId int64) *dao.Video {
 }
 
 func CreateVideo(author *dao.User, playUrl string, coverUrl string, title string) {
-	dao.CreateVideo(author, playUrl, coverUrl, title)
+	video := dao.CreateVideo(author, playUrl, coverUrl, title)
+	rdb.UpdateLatestVideos(video)
 }
 
 func GetPublishedVideosByUserId(userId int64) []dao.Video {
@@ -30,6 +32,6 @@ func CheckIsFavorite(videoId int64, user *dao.User) bool {
 	return false
 }
 
-func GetLatestVideos(skip int) []dao.Video {
-	return dao.GetLatestVideos(skip)
+func GetLatestVideos() []dao.Video {
+	return rdb.GetVideoList()
 }

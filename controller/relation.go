@@ -17,21 +17,24 @@ type UserListResponse struct {
 func RelationAction(c *gin.Context) {
 	token := c.Query("token")
 
-	if token != "" {
+	if service.CheckToken(token) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			c.JSON(http.StatusOK, Response{StatusCode: 0})
 			return
 		}
 	}
 
-	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	c.JSON(http.StatusOK, Response{
+		StatusCode: 1,
+		StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
+	})
 
 }
 
 // FollowList all users have same follow list
 func FollowList(c *gin.Context) {
 	token := c.Query("token")
-	if token != "" {
+	if service.CheckToken(token) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			user, _ := service.GetUserByName(claim.UserName)
 			c.JSON(http.StatusOK, UserListResponse{
@@ -45,8 +48,8 @@ func FollowList(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
-			StatusCode: -1,
-			StatusMsg:  "User doesn't exist",
+			StatusCode: 1,
+			StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
 		},
 		UserList: []dao.User{},
 	})
@@ -69,8 +72,8 @@ func FollowerList(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
-			StatusCode: -1,
-			StatusMsg:  "User doesn't exist",
+			StatusCode: 1,
+			StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
 		},
 		UserList: []dao.User{},
 	})

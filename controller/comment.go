@@ -13,7 +13,7 @@ func CommentAction(c *gin.Context) {
 	token := c.Query("token")
 	actionType := c.Query("action_type")
 	videoId, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
-	if token != "" {
+	if service.CheckToken(token) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			if actionType == "1" {
 				content := c.Query("comment_text")
@@ -31,7 +31,11 @@ func CommentAction(c *gin.Context) {
 			return
 		}
 	}
-	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	c.JSON(http.StatusOK,
+		Response{
+			StatusCode: 1,
+			StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
+		})
 
 }
 

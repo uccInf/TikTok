@@ -28,3 +28,5 @@ const (
 )
 
 const CurrentOs = MacOS
+
+const MaxFeedVideoNum = 30

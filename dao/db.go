@@ -9,7 +9,7 @@ import (
 
 var DB *gorm.DB
 
-func Init() {
+func init() {
 	var err error
 	s := "%s:%s@tcp(localhost:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf(

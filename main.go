@@ -1,7 +1,7 @@
 package main
 
 import (
-	"TikTok/dao"
+	"TikTok/rdb"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,7 +10,7 @@ func main() {
 
 	initRouter(r)
 
-	dao.Init()
+	rdb.InitRedis()
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

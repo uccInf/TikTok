@@ -16,8 +16,12 @@ import (
 func Publish(c *gin.Context) {
 	token := c.PostForm("token")
 
-	if claim, err := utils.ParseToken(token); claim == nil || err != nil {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	if claim, err := utils.ParseToken(token); !service.CheckToken(token) || claim == nil || err != nil {
+		c.JSON(http.StatusOK,
+			Response{
+				StatusCode: 1,
+				StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
+			})
 		return
 	}
 
@@ -80,7 +84,7 @@ func Publish(c *gin.Context) {
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
 	token := c.Query("token")
-	if token != "" {
+	if service.CheckToken(token) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			videos := service.GetPublishedVideosByUserId(claim.UserId)
 			c.JSON(http.StatusOK, VideoListResponse{
@@ -93,7 +97,10 @@ func PublishList(c *gin.Context) {
 		}
 	}
 	c.JSON(http.StatusOK, UserInfoResponse{
-		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+		Response: Response{
+			StatusCode: 1,
+			StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
+		},
 	})
 
 }
