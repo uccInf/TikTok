@@ -2,11 +2,13 @@ package controller
 
 import (
 	"TikTok/constdef"
+	"TikTok/logger"
 	"TikTok/service"
 	"TikTok/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -32,7 +34,7 @@ func Publish(c *gin.Context) {
 	claim, _ := utils.ParseToken(token)
 	user, _ := service.GetUserByName(claim.UserName)
 	finalName := fmt.Sprintf("%d_%s", user.UserId, filename)
-	saveFile := filepath.Join(constdef.StaticLocalPath, finalName)
+	saveFile := filepath.Join(constdef.StaticLocalPath, "video", finalName)
 	if err := c.SaveUploadedFile(data, saveFile); err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -42,10 +44,33 @@ func Publish(c *gin.Context) {
 	}
 	playUrl := "http://" + filepath.Join(
 		fmt.Sprintf("%s:%d%s", constdef.Ip, constdef.ServerPort, constdef.StaticServerPath),
-		finalName,
+		"video/"+finalName,
 	)
-	service.CreateVideo(user, playUrl, playUrl)
+	coverUrl := "http://" + filepath.Join(
+		fmt.Sprintf("%s:%d%s", constdef.Ip, constdef.ServerPort, constdef.StaticServerPath),
+		"image/"+finalName+".jpg",
+	)
 
+	title := c.PostForm("title")
+
+	var ffmpegSite string
+	if constdef.CurrentOs == constdef.MacOS {
+		ffmpegSite = "./utils/ffmpeg/Mac/ffmpeg"
+	} else if constdef.CurrentOs == constdef.Windows {
+		ffmpegSite = "./utils/ffmpeg/Windows/ffmpeg"
+	}
+
+	cmd := exec.Command(
+		ffmpegSite, "-i", "./public/video/"+finalName,
+		"-vf", "select=eq(n\\, 10)", "-frames", "1",
+		"./public/image/"+finalName+".jpg",
+	)
+
+	if err = cmd.Run(); err != nil {
+		logger.Error(err.Error())
+	}
+
+	service.CreateVideo(user, playUrl, coverUrl, title)
 	c.JSON(http.StatusOK, Response{
 		StatusCode: 0,
 		StatusMsg:  finalName + " uploaded successfully",

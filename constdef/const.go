@@ -18,6 +18,13 @@ const (
 	VideosTableName   = "videos"
 )
 
-const ReplaceWord = "******"
+const Replace = "*"
 
 const SecretKey = "TikTok"
+
+const (
+	MacOS   = 1
+	Windows = 2
+)
+
+const CurrentOs = MacOS

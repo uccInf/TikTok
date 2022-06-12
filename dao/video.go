@@ -11,6 +11,7 @@ type Video struct {
 	AuthorId      int64  `json:"author_id"`
 	PlayUrl       string `json:"play_url" json:"play_url,omitempty"`
 	CoverUrl      string `json:"cover_url,omitempty"`
+	Title         string `json:"title"`
 	FavoriteCount int64  `json:"favorite_count,omitempty"`
 	CommentCount  int64  `json:"comment_count,omitempty"`
 	IsFavorite    bool   `json:"is_favorite,omitempty"`
@@ -27,12 +28,13 @@ func GetVideoById(videoId int64) *Video {
 	return &video
 }
 
-func CreateVideo(author *User, playUrl string, coverUrl string) {
+func CreateVideo(author *User, playUrl string, coverUrl string, title string) {
 	video := &Video{
 		Author:     *author,
 		AuthorId:   author.UserId,
 		PlayUrl:    playUrl,
 		CoverUrl:   coverUrl,
+		Title:      title,
 		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 	}
 	DB.Table(constdef.VideosTableName).
