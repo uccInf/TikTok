@@ -1,32 +1,30 @@
 package constdef
 
-const ServerPort = 8080
-
-const StaticServerPath = "/static"
-
-const StaticLocalPath = "./public"
-
-// database config
+// Server config
 const (
-	UserName          = "root"
-	PassWord          = "12345678"
-	Ip                = "192.168.1.25"
-	Port              = 3306
+	ServerPort = 8080
+	ServerIp   = "192.168.1.25"
+)
+
+// DataBase config
+const (
+	DBUserName        = "root"
+	DBPassWord        = "12345678"
+	DBIp              = "localhost"
+	DBPort            = 3306
 	DataBaseName      = "TikTok"
 	UserTableName     = "users"
 	CommentsTableName = "comments"
 	VideosTableName   = "videos"
 )
 
-const Replace = "*"
-
-const SecretKey = "TikTok"
-
+// redis config
 const (
-	MacOS   = 1
-	Windows = 2
+	RDBIp       = "127.0.0.1"
+	RDBPort     = 6379
+	RDBIndex    = 0
+	RDBPassWord = ""
 )
 
-const CurrentOs = MacOS
-
-const MaxFeedVideoNum = 30
+// Os config
+const Os = MacOS

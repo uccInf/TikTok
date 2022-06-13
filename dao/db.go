@@ -2,6 +2,7 @@ package dao
 
 import (
 	"TikTok/constdef"
+	"TikTok/logger"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,23 +12,22 @@ var DB *gorm.DB
 
 func init() {
 	var err error
-	s := "%s:%s@tcp(localhost:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
+	s := "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf(
-		s, constdef.UserName, constdef.PassWord, constdef.Port, constdef.DataBaseName,
+		s, constdef.DBUserName, constdef.DBPassWord, constdef.DBIp, constdef.DBPort, constdef.DataBaseName,
 	)
 	fmt.Println(dsn)
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
-	//DB.DB().SetMaxOpenConns(100)
-	//DB.DB().SetMaxIdleConns(10)
+
 	if err != nil {
-		panic(err)
+		logger.Panic(err)
 	}
 	DB.AutoMigrate(&User{}, &Video{}, &Comment{})
 
 	if err != nil {
-		panic(err)
+		logger.Panic(err)
 	}
 
 }

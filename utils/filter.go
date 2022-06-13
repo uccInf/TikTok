@@ -2,7 +2,6 @@ package utils
 
 import (
 	"TikTok/constdef"
-	"fmt"
 	"unicode/utf8"
 )
 
@@ -24,7 +23,6 @@ func NewTrie() *Trie {
 func (trie *Trie) insert(word string) *Trie {
 	cur := trie
 	for _, v := range []rune(word) {
-		// 若存在，不做处理，若不存在，创建新的子树
 		if _, ok := cur.child[v]; !ok {
 			t := NewTrie()
 			cur.child[v] = t
@@ -43,10 +41,10 @@ func (trie *Trie) FilterString(word string) string {
 			cur = cur.child[v]
 			if cur.word != "" {
 				word = replaceStr(word, constdef.Replace, i+1-utf8.RuneCountInString(cur.word), i)
-				cur = trie // ，符合条件，从头开始准备下一次遍历
+				cur = trie
 			}
 		} else {
-			cur = trie // 不存在，则从头遍历
+			cur = trie
 		}
 	}
 	return word
@@ -73,9 +71,4 @@ func init() {
 
 func GetTrie() *Trie {
 	return trie
-}
-
-func testFilter() {
-
-	fmt.Println(GetTrie().FilterString("傻逼, sb, 我是你爹"))
 }

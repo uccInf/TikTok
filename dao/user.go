@@ -2,6 +2,7 @@ package dao
 
 import (
 	"TikTok/constdef"
+	"TikTok/logger"
 )
 
 type User struct {
@@ -35,11 +36,19 @@ func CreateUser(name string, password string) (u *User) {
 }
 
 func AddUserFavoriteVideos(user *User, video *Video) {
-	DB.Model(user).Association("FavoriteVideos").Append(video)
+	err := DB.Model(user).Association("FavoriteVideos").Append(video)
+	if err != nil {
+		logger.Panic(err)
+		return
+	}
 	AddVideoFavoriteNum(video.VideoId, video.FavoriteCount)
 }
 
 func RemoveUserFavoriteVideos(user *User, video *Video) {
-	DB.Model(user).Association("FavoriteVideos").Delete(video)
+	err := DB.Model(user).Association("FavoriteVideos").Delete(video)
+	if err != nil {
+		logger.Panic(err)
+		return
+	}
 	RemoveVideoFavoriteNum(video.VideoId, video.FavoriteCount)
 }

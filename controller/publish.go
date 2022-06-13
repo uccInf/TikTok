@@ -47,20 +47,20 @@ func Publish(c *gin.Context) {
 		return
 	}
 	playUrl := "http://" + filepath.Join(
-		fmt.Sprintf("%s:%d%s", constdef.Ip, constdef.ServerPort, constdef.StaticServerPath),
+		fmt.Sprintf("%s:%d%s", constdef.ServerIp, constdef.ServerPort, constdef.StaticServerPath),
 		"video/"+finalName,
 	)
 	coverUrl := "http://" + filepath.Join(
-		fmt.Sprintf("%s:%d%s", constdef.Ip, constdef.ServerPort, constdef.StaticServerPath),
+		fmt.Sprintf("%s:%d%s", constdef.ServerIp, constdef.ServerPort, constdef.StaticServerPath),
 		"image/"+finalName+".jpg",
 	)
 
 	title := c.PostForm("title")
 
 	var ffmpegSite string
-	if constdef.CurrentOs == constdef.MacOS {
+	if constdef.Os == constdef.MacOS {
 		ffmpegSite = "./utils/ffmpeg/Mac/ffmpeg"
-	} else if constdef.CurrentOs == constdef.Windows {
+	} else if constdef.Os == constdef.Windows {
 		ffmpegSite = "./utils/ffmpeg/Windows/ffmpeg"
 	}
 
@@ -71,7 +71,16 @@ func Publish(c *gin.Context) {
 	)
 
 	if err = cmd.Run(); err != nil {
-		logger.Error(err.Error())
+		cmd = exec.Command(
+			"ffmpeg", "-i", "./public/video/"+finalName,
+			"-vf", "select=eq(n\\, 10)", "-frames", "1",
+			"./public/image/"+finalName+".jpg",
+		)
+		if err = cmd.Run(); err != nil {
+			logger.Error(err.Error())
+		}
+
+		coverUrl = "./public/image/default.png"
 	}
 
 	service.CreateVideo(user, playUrl, coverUrl, title)

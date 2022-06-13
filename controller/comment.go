@@ -17,6 +17,8 @@ func CommentAction(c *gin.Context) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			if actionType == "1" {
 				content := c.Query("comment_text")
+				trie := utils.GetTrie()
+				content = trie.FilterString(content)
 				comment := service.CreateComment(claim.UserId, content, videoId)
 				service.AddVideoCommentNum(videoId)
 				c.JSON(http.StatusOK,

@@ -37,7 +37,7 @@ func FavoriteAction(c *gin.Context) {
 // FavoriteList all users have same favorite video list
 func FavoriteList(c *gin.Context) {
 	token := c.Query("token")
-	if token != "" {
+	if service.CheckToken(token) {
 		if claim, err := utils.ParseToken(token); claim != nil && err == nil {
 			user, _ := service.GetUserByName(claim.UserName)
 			c.JSON(http.StatusOK, VideoListResponse{
@@ -51,7 +51,7 @@ func FavoriteList(c *gin.Context) {
 		c.JSON(http.StatusOK, VideoListResponse{
 			Response: Response{
 				StatusCode: 1,
-				StatusMsg:  "User doesn't exist",
+				StatusMsg:  "User doesn't exist or token has been out of date, please relogin",
 			},
 			VideoList: []dao.Video{},
 		})

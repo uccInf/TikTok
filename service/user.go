@@ -43,7 +43,7 @@ func CreateToken(userId int64, userName string) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
 	tokenString, _ := token.SignedString([]byte(constdef.SecretKey))
 	r := rdb.GetRedisClient()
-	_, err := r.Set(tokenString, userName, time.Hour).Result()
+	_, err := r.Set(tokenString, userName, constdef.TokenExpireInterval).Result()
 	if err != nil {
 		logger.Error("fail to set token in redis  " + err.Error())
 	}

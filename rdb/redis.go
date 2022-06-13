@@ -5,6 +5,7 @@ import (
 	"TikTok/dao"
 	"TikTok/logger"
 	"encoding/json"
+	"fmt"
 	"github.com/go-redis/redis"
 	"time"
 )
@@ -12,9 +13,11 @@ import (
 var rdb *redis.Client
 
 func InitRedis() {
+	addr := fmt.Sprintf("%s:%d", constdef.RDBIp, constdef.RDBPort)
 	rdb = redis.NewClient(&redis.Options{
-		Addr: "127.0.0.1:6379",
-		DB:   0,
+		Addr:     addr,
+		DB:       constdef.RDBIndex,
+		Password: constdef.RDBPassWord,
 	})
 	pong, err := rdb.Ping().Result()
 	if err != nil {
@@ -23,7 +26,7 @@ func InitRedis() {
 	if pong != "PONG" {
 		logger.Fatal("connect redis fail")
 	}
-	rdb.Set("WhetherUpdate", "WaiteToUpdate", 5*time.Minute)
+	rdb.Set("WhetherUpdate", "WaiteToUpdate", 30*time.Second)
 	UpdateData()
 }
 
@@ -58,7 +61,8 @@ func RemoveVideo() {
 }
 
 func GetVideoList() []dao.Video {
-	if _, err := rdb.Get("WhetherUpdate").Result(); err == nil {
+	if _, err := rdb.Get("WhetherUpdate").Result(); err != nil {
+		rdb.Set("WhetherUpdate", "WaiteToUpdate", 5*time.Minute)
 		return UpdateData()
 	}
 	ls := rdb.LRange("LatestVideos", 0, -1).Val()
